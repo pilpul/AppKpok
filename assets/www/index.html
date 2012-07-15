@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>App Kpok</title>
+
+<script type="text/javascript" charset="utf-8" src="cordova-1.7.0.js"></script>
+<script src="js/jquery-1.7.2.min.js"></script>
+<script src="js/jquery.mobile-1.1.0/jquery.mobile-1.1.0.min.js"></script>
+<script src="js/underscore.min.js"></script>
+<script src="js/backbone-min.js"></script>
+<script src="js/backbone.localstorage-min.js"></script>
+
+
+v
+<script src="js/plugins/jquery.hammer.js"></script>
+
+
+<link rel="stylesheet" href="js/jquery.mobile-1.1.0/jquery.mobile-1.1.0.min.css" />
+<link rel="stylesheet" href="css/kpok.css" />
+<link rel="stylesheet" href="js/jquery.mobile-1.1.0/themes/android-theme.css" />
+<script type="text/javascript">
+var DEBUG_ANDROID_THEME=true
+</script>
+<script type="text/javascript" src="js/jquery.mobile-1.1.0/jquery.mobile.android-theme.js"></script>
+
+</head>
+<body>
+<div data-role="page" id="home">
+
+	<div data-role="header">
+		<h1>App Kpok</h1>
+		<a href="#options" data-icon="gear" class="ui-btn-right" data-iconpos="notext" data-transition="slide">Options</a>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+
+	<ul data-role="listview">
+	<li><a href="http://www.annakpok.de">Anna's Homepage</a>
+	<li><a href="http://www.facebook.com/annakpok">Anna's Facebookseite</a></li>
+	<li><a href="http://www.joindiaspora.com/u/annakpok">Anna bei Diaspora*</a></li>
+	<li><a href="#archive"  data-transition="slide">Mailinglistenarchiv</a>
+	</ul>
+	
+	<a href="#" onclick="editPhoto()"><img id="smallImage" src="" style="display:none; width:100%" /></a>
+	</div><!-- /content -->
+
+	<div data-role="footer" data-position="fixed">
+	<!-- <div data-role="navbar" data-position="fixed">
+		<ul>
+			<li><a onclick="capturePhoto();">Foto machen</a></li>
+			<li><a onclick="getPhoto(pictureSource.PHOTOLIBRARY);">ausser Galerie</a></li>
+		</ul>
+	</div> -->
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+<div data-role="page" id="options">
+
+	<div data-role="header">
+		<a href="#home" data-icon="arrow-l" class="ui-btn-left" data-iconpos="notext" data-direction="reverse" data-transition="slide">zur&uuml;ck</a>
+		<h1>App Kpok</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+
+	Gemacht mit <a href="http://www.phonegap.com">PhoneGap</a>, 
+	<a href="http://www.jquery.com">jQuery</a> und 
+	<a href="http://www.jquerymobile.com">jQuery Mobile</a><br />
+	Ergänzt durch die Plugins <a href="https://github.com/eightmedia/hammer.js">Hammer.js</a>
+	und jjoe64s <a href="https://github.com/jjoe64/jquery-mobile-android-theme">Holo Theme</a>.
+	
+	<p>Geräteinformationen</p>
+	<p id="text"></p>
+	
+	</div>
+	
+	<div data-role="footer" data-position="fixed">
+		
+	</div><!-- /footer -->
+</div><!-- /options page -->
+
+<div data-role="page" id="archive">
+
+	<div data-role="header">
+		<a href="#home" data-icon="arrow-l" class="ui-btn-left"  data-direction="reverse" data-transition="slide">zur&uuml;ck</a>
+		<h1>App Kpok</h1>
+		<a href="" data-icon="refresh" class="ui-btn-right" data-iconpos="notext" onclick="MailDB.update()">Load</a>
+	</div><!-- /header -->
+
+	<div data-role="content">
+		<div id="MailList">
+		</div>
+		<ul id="archive_content" data-role="listview" >
+			<li data-role="list-divider" role="heading" class="archivedivider" id="archive_today">Heute</li>
+			<li data-role="list-divider" role="heading" class="archivedivider" id="archive_yesterday">Gestern</li>
+			<li data-role="list-divider" role="heading" class="archivedivider" id="archive_lastweek">Letzte Woche</li>
+			<li data-role="list-divider" role="heading" class="archivedivider"  id="archive_old">Fr&uuml;her</li>
+			<!-- List of archived mails -->
+		</ul>
+			
+		<p><a href="" data-role="button" data-icon="refresh" onclick="MailDB.update()" data-iconpos="top" >Aktualisieren</a></p>
+		<p><a href="#"  data-role="button"  data-icon="delete" data-iconpos="notext" onclick="localStorage.clear();">clear</a></p>
+    </div>
+	<div data-role="footer" data-position="fixed">
+		
+	</div><!-- /footer -->
+</div><!-- /archive-page -->
+
+<!-- TEMPLATES -->
+<!-- requires mid, subject, from, time -->
+<script id="tplMailListEntry" type="text/template">
+
+	<div data-role="collapsible" data-iconpos="right"><h3><%= subject %><p class="ui-li-aside ui-li-desc">Von <%= from %> um <%= date %></h3>
+	<p id="<%= id %>"><%= content %></p>
+	</div>
+	
+</script>
+<script src="js/appkpok.js"></script>
+</body>
+</html>
