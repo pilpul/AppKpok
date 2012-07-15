@@ -11,7 +11,6 @@
 <script src="js/backbone.localstorage-min.js"></script>
 
 
-v
 <script src="js/plugins/jquery.hammer.js"></script>
 
 
@@ -91,11 +90,12 @@ var DEBUG_ANDROID_THEME=true
 		<div id="MailList">
 		</div>
 		<ul id="archive_content" data-role="listview" >
+			<!-- List of archived mails -->
 			<li data-role="list-divider" role="heading" class="archivedivider" id="archive_today">Heute</li>
 			<li data-role="list-divider" role="heading" class="archivedivider" id="archive_yesterday">Gestern</li>
 			<li data-role="list-divider" role="heading" class="archivedivider" id="archive_lastweek">Letzte Woche</li>
 			<li data-role="list-divider" role="heading" class="archivedivider"  id="archive_old">Fr&uuml;her</li>
-			<!-- List of archived mails -->
+			
 		</ul>
 			
 		<p><a href="" data-role="button" data-icon="refresh" onclick="MailDB.update()" data-iconpos="top" >Aktualisieren</a></p>
@@ -107,9 +107,10 @@ var DEBUG_ANDROID_THEME=true
 </div><!-- /archive-page -->
 
 <!-- TEMPLATES -->
-<!-- requires mid, subject, from, time -->
 <script id="tplMailListEntry" type="text/template">
 
+	<!-- Since mails are just plaintext in the database we have to replace carriage returns with HTML-Linebreaks -->
+	<% content = content.replace(/\n/gi,"<br />"); %>
 	<div data-role="collapsible" data-iconpos="right"><h3><%= subject %><p class="ui-li-aside ui-li-desc">Von <%= from %> um <%= date %></h3>
 	<p id="<%= id %>"><%= content %></p>
 	</div>

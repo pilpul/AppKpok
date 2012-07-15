@@ -5,3 +5,11 @@
 .archivedivider{
 	display: none;
 }
+
+/* Replace default jQM styles for the list view of collapsibles */
+.ui-li-heading{
+	margin:  1px 0;
+}
+.ui-collapsible {
+    margin: 0;
+}

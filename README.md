@@ -1,13 +1,16 @@
-This is a simple app to test my skills.
+##Disclaimer
+This is a simple app to improve my JavaScript skills.
+I'll try to comment as good as possible, but this is work-in-progress/alpha/whatever-you-call-it.
 
-I'm using
+##What it does: 
+
+Mails to our mailinglist are pushed to a couchDB. The app(-to-be) fetches it from there, save them to the localStorage of the browser and displays them.
+At the moment this is ab webapp that runs in any (uptodate) browser. Phonegap makes installable APKs and may later be used to access native Android functionalities.
+
+##I'm using
 
 * [PhoneGap](http://www.phonegap.com), (so all I did by myself is in assets/www)
-
-* [jQuery](http://www.jquery.com) and [jQuery Mobile](http://www.jquerymobile.com)<a href=""></a>
-
-* [Backbone.js](http://documentcloud.github.com/backbone/) with [localStorage](https://github.com/jeromegn/Backbone.localStorage) for clean JavaScript code
-
+* [jQuery](http://www.jquery.com) and [jQuery Mobile](http://www.jquerymobile.com)
+* [Backbone.js](http://documentcloud.github.com/backbone/) (requires underscore.js) with [localStorage](https://github.com/jeromegn/Backbone.localStorage) for 'clean' MVC-JavaScript code
 * Additional plugins used are [Hammer.js](https://github.com/eightmedia/hammer.js), jjoe64s [Holo Theme](https://github.com/jjoe64/jquery-mobile-android-themes)
-	
 * The referenced "localhost"-database is a [couchDB](https://couchdb.apache.org/) instance
