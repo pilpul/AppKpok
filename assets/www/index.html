@@ -3,6 +3,8 @@
 <head>
 <title>App Kpok</title>
 
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+		
 <script type="text/javascript" charset="utf-8" src="cordova-1.7.0.js"></script>
 <script src="js/jquery-1.7.2.min.js"></script>
 <script src="js/jquery.mobile-1.1.0/jquery.mobile-1.1.0.min.js"></script>
@@ -83,7 +85,7 @@ var DEBUG_ANDROID_THEME=true
 	<div data-role="header">
 		<a href="#home" data-icon="arrow-l" class="ui-btn-left"  data-direction="reverse" data-transition="slide">zur&uuml;ck</a>
 		<h1>App Kpok</h1>
-		<a href="" data-icon="refresh" class="ui-btn-right" data-iconpos="notext" onclick="MailDB.update()">Load</a>
+		<a href="#ConfigDialog" data-icon="gear" class="ui-btn-right" data-iconpos="notext" data-transition="slide">zur&uuml;ck</a>
 	</div><!-- /header -->
 
 	<div data-role="content">
@@ -106,13 +108,41 @@ var DEBUG_ANDROID_THEME=true
 	</div><!-- /footer -->
 </div><!-- /archive-page -->
 
+<div data-role="dialog" id="ConfigDialog">
+	<div data-role="header">
+		<h1>Einstellungen</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">
+		<div data-role="fieldcontain">
+		    <label for="baseURL">ServerURL:</label>
+		    <input type="text" name="baseURL" id="baseURL" value=""  />
+		    <label for="username">Username</label>
+		    <input type="text" name="username" id="username" value=""  />
+		    <label for="password">Password:</label>
+		    <input type="password" name="password" id="password" value=""  />
+		    <a href="#" data-role="button" onclick="Config.update()">Speichern</a>
+		</div>	
+    </div>
+	<div data-role="footer" data-position="fixed">
+		
+	</div><!-- /footer -->	
+</div>
+
 <!-- TEMPLATES -->
 <script id="tplMailListEntry" type="text/template">
 
 	<!-- Since mails are just plaintext in the database we have to replace carriage returns with HTML-Linebreaks -->
-	<% content = content.replace(/\n/gi,"<br />"); %>
+	<% if (message!="empty mail..."){ 
+			message = message.replace(/\n/gi,"<br />"); 
+		}else if (html != null){
+			message = html;
+		}else{
+			message = body.replace(/\n/gi,"<br />"); 
+		}
+	%>
 	<div data-role="collapsible" data-iconpos="right"><h3><%= subject %><p class="ui-li-aside ui-li-desc">Von <%= from %> um <%= date %></h3>
-	<p id="<%= id %>"><%= content %></p>
+	<p id="<%= id %>"><%= message %></p>
 	</div>
 	
 </script>

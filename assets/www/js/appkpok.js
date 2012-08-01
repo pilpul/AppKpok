@@ -7,7 +7,35 @@
  * @License: GPLv3
  */
 
-	
+
+/* TODO This config model can be access by the 'options' icon on the archive page. 
+ * username and password to access the database can be set here and should be stored in localStorage
+ */
+var ConfigSetting = Backbone.Model.extend({
+	localStorage: new Backbone.LocalStorage("kpoksettings"),
+	defaults: {
+		baseURL: "http://localhost:27080/mailkpok/",
+		username: "USERNAME",
+		password: "PASSWORD"
+	}
+	update :function(){
+		this.set({baseURL: $('#baseURL').val(), username: $('#username').val(), password: $('#password').val() });
+		this.save();
+		$('#ConfigDialog').dialog('close');
+	}
+});
+
+var Config = new ConfigSetting({id:	1});
+Config.fetch();
+console.log(Config.get("baseURL"))
+
+$( '#ConfigDialog' ).live( 'pageinit',function(event){
+  $('#baseURL').val(Config.get("baseURL"))
+  $('#username').val(Config.get("username"))
+  $('#password').val(Config.get("password"))
+});
+
+
 /**
  * Backbone-Model: Mail
  * Description: Model for an e-mail.  
@@ -16,11 +44,12 @@
 var Mail = Backbone.Model.extend({
 
     defaults: {
-        content: "empty mail...",
-        date: "today",
-        from: "noone wrote this mail",
+        message: "empty mail...",
+        date: "someday",
+        from: "no one",
         subject: "empty subject",
-        to: "no one received it"
+        html: "no html",
+        body: "no body"
       },
     
 	initialize: function() {
@@ -48,50 +77,66 @@ var Mail = Backbone.Model.extend({
 
 /**
  * Backbone-Collection: MailDBStore
- * Description: Interface to localStorage and to couchDB Database of the server
+ * Description: Interface to localStorage and to MongoDB Database of the server
  * 
  */
 var MailDBStore = Backbone.Collection.extend({
 	model: Mail,
 	localStorage: new Backbone.LocalStorage("kpokmailarchive"),
 
+	//Sorts the collection automatically by date
+	comparator : function(mail) {
+	  milli = new Date(mail.get("date"));
+	  return milli.getTime();
+	},
+
 	update: function(){
-		//TODO: Make couchdb to answer only if credentials are provided
 		console.log('Requesting data ..')
 		var baseURL = "";
+		//Authentication TODO
+		//"Cross Domain" Post messages only works in PhoneGap not in native browsers..
+		$.post('Config.get('baseURL')+'/_authenticate', {"username":Config.get('username'), "password":Config.get('password')},function(data){}, 'json')
+		.success(function(data){
+			console.log(data)
+		})
 		//TODO This answers with a list of ALL keys. Better: Only send the changes
-	    $.post('http://localhost:5984/couchbdkit_test/_all_docs',function(data){
+	    $.post(Config.get('baseURL')+'/mails/_find',function(data){
 	    	//loading message
 	    	console.log('Retrieving Maildatabase..')
 	    	$.mobile.showPageLoadingMsg()
 	    	//$('#archive_content').empty()
 	    }, 'jsonp')
 	    .success(function(data){
-	    	newmails = 0;
-	    	$.each(data.rows, function(i, mail){
-	    		//TODO: Request the last 10 Mails, make 'next page' links 
-	    		//Only request those mails that are not already in the localStorage
+	    	if(data.ok != 1){
+	    		console.error(data.errmsg);
+	    	}else{
 	    		
-	    		if(MailDB.where({_id: mail.id}).length<1){
-	    			newmails++;
-	    			console.log("Requesting id: "+mail.id)
-	    			$.get('http://localhost:5984/couchbdkit_test/'+mail.id, function(data){;
-		    		}, 'jsonp')
-		    		.success(function(data){
-	        			newmail = new Mail(data);
-	    				MailDB.add(newmail)
-	    				newmail.save();
-	    				App.addOne({model: newmail}); //TODO make it work!
-		    			
-		    		})	
-	    		}
-	    		
-	    	})
-	    	console.log(newmails + ' new Items')
-	    	$.mobile.hidePageLoadingMsg()
+		    	newmails = 0;
+		    	$.each(data.results, function(i, mail){
+		    		//TODO: Request the last 10 Mails, make 'next page'; Mongo allows this with the _limit parameter
+		    		//Only request those mails that are not already in the localStorage
+		    		if(MailDB.where({date: mail.date}).length<1){
+		    			newmails++;
+		    			//console.log("Requesting id: "+mail.id)
+		    			//$.get('http://localhost:5984/couchbdkit_test/'+mail.id, function(data){;
+			    		//}, 'jsonp')
+			    		//.success(function(data){
+		        			newmail = new Mail(mail);
+		    				MailDB.add(newmail)
+		    				newmail.save();
+		    				
+			    			
+			    		//})	
+		    		}
+		    		
+		    	})
+		    	console.log(newmails + ' new Items')
+		    	App.render(); //re-render the app after updates from Databse
+	    	}
+	    	$.mobile.hidePageLoadingMsg()		    		
 	    })	
 	    .error(function(){
-	    	console.error('Error retrieving database. See answer to request for details')
+	    	console.error('Error connecting to database. See answer to request for details')
 	    })		
 	}
 });
@@ -127,11 +172,9 @@ var AppView = Backbone.View.extend({
 	addOne: function(mail) {		  
 	      var view = new MailView({model: mail});
 	      $("#archive_content").append(view.render().el);
-	      //TODO Sort in the right place
 	    },
 	addAll: function() {
 		  console.log("Adding all")
-		  //TODO Sort by date!
 	      MailDB.each( this.addOne )
 	    },
 	render: function(){
