@@ -16,4 +16,6 @@ At the moment this is a webapp that runs in any (uptodate) browser. Phonegap mak
 * The database is a [mongoDB](https://mongodb.org/) instance with [sleepy.mongoose](https://github.com/kchodorow/sleepy.mongoose) as REST-Interface
 
 ##Changelog
+20120803: Had to work out how requests to sleepy.mongoose are translated to mongoDB. Now requesting 10 items at a time (and older ones);
+Added sorting by date in AppView, fixed UI, fixed authentication
 20120801: Changed to mongoDB Backend.
