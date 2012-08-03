@@ -17,8 +17,8 @@
 
 
 <link rel="stylesheet" href="js/jquery.mobile-1.1.0/jquery.mobile-1.1.0.min.css" />
-<link rel="stylesheet" href="css/kpok.css" />
 <link rel="stylesheet" href="js/jquery.mobile-1.1.0/themes/android-theme.css" />
+<link rel="stylesheet" href="css/kpok.css" />
 <script type="text/javascript">
 var DEBUG_ANDROID_THEME=true
 </script>
@@ -91,17 +91,19 @@ var DEBUG_ANDROID_THEME=true
 	<div data-role="content">
 		<div id="MailList">
 		</div>
-		<ul id="archive_content" data-role="listview" >
+		<div id="archive_content" data-role="listview" >
 			<!-- List of archived mails -->
-			<li data-role="list-divider" role="heading" class="archivedivider" id="archive_today">Heute</li>
-			<li data-role="list-divider" role="heading" class="archivedivider" id="archive_yesterday">Gestern</li>
-			<li data-role="list-divider" role="heading" class="archivedivider" id="archive_lastweek">Letzte Woche</li>
-			<li data-role="list-divider" role="heading" class="archivedivider"  id="archive_old">Fr&uuml;her</li>
+		
+		</div>
 			
-		</ul>
+		<p id="archive_bottommenu">
+			<div data-role="controlgroup" data-type="horizontal">
+				<a href="" data-role="button" data-icon="refresh" onclick="MailDB.update()" data-iconpos="top" >Aktualisieren</a>
+				<a href="" data-role="button" data-icon="arrow-d" onclick="MailDB.getOlder()" data-iconpos="top" >Aktualisieren</a>
+			</div>
+		</p>
+
 			
-		<p><a href="" data-role="button" data-icon="refresh" onclick="MailDB.update()" data-iconpos="top" >Aktualisieren</a></p>
-		<p><a href="#"  data-role="button"  data-icon="delete" data-iconpos="notext" onclick="localStorage.clear();">clear</a></p>
     </div>
 	<div data-role="footer" data-position="fixed">
 		
@@ -114,6 +116,7 @@ var DEBUG_ANDROID_THEME=true
 	</div><!-- /header -->
 
 	<div data-role="content">
+	<!-- TODO Sort this.. -->
 		<div data-role="fieldcontain">
 		    <label for="baseURL">ServerURL:</label>
 		    <input type="text" name="baseURL" id="baseURL" value=""  />
@@ -122,6 +125,7 @@ var DEBUG_ANDROID_THEME=true
 		    <label for="password">Password:</label>
 		    <input type="password" name="password" id="password" value=""  />
 		    <a href="#" data-role="button" onclick="Config.update()">Speichern</a>
+		    <p><a href="#"  data-role="button"  data-icon="delete" onclick="localStorage.clear();">Lokalen Speicher löschen</a></p>
 		</div>	
     </div>
 	<div data-role="footer" data-position="fixed">
@@ -145,6 +149,12 @@ var DEBUG_ANDROID_THEME=true
 	<p id="<%= id %>"><%= message %></p>
 	</div>
 	
+</script>
+<script id="tpl_archiveDividers" type="text/template">
+			<div class="archivedivider ui-li-heading" id="archive_today">Heute</div>
+			<div class="archivedivider ui-li-heading" id="archive_yesterday">Gestern</div>
+			<div class="archivedivider ui-li-heading" id="archive_lastweek">Letzte Woche</div>
+			<div class="archivedivider ui-li-heading"  id="archive_old">Fr&uuml;her</div>
 </script>
 <script src="js/appkpok.js"></script>
 </body>

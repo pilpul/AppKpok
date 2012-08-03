@@ -917,8 +917,17 @@ a.ui-link-inherit {
 }
 /* loading icon */
 .ui-icon-loading {
-	background: url(images/ajax-loader.gif);
-	background-size: 46px 46px;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: url("../../jquery-mobile-1.1.0/images/ajax-loader.gif");
+    background-origin: padding-box;
+    background-position: 0 0;
+    background-repeat: repeat;
+    background-size: 46px 46px;
+    -moz-border-radius: 100px;
+	-webkit-border-radius: 100px;
+	border-radius: 100px;
 }
 /* Button corner classes
 -----------------------------------------------------------------------------------------------------------*/

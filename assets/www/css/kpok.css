@@ -1,15 +1,38 @@
+
+/******************************/
+/*     Mailarchive Styles     */
+/******************************/
 .mailmeta{
 	font-size:0.9em;
 	font-weight: regular;
 }
 .archivedivider{
 	display: none;
+	padding: 0.6em;
 }
 
-/* Replace default jQM styles for the list view of collapsibles */
+#archive_bottommenu{
+	margin-top:2em;
+}
+
+/******************************/
+/* Overrides for theme styles */
+/******************************/
 .ui-li-heading{
 	margin:  1px 0;
 }
 .ui-collapsible {
     margin: 0;
+}
+body.android .ui-icon-loading {
+    background-image: url("../js/jquery.mobile-1.1.0/images/ajax-loader.gif");
+    background-size: 46px 46px;
+    border-radius: 36px 36px 36px 36px;
+    height: 44px;
+    width: 44px;
+}
+
+body.android .ui-body-b {
+    background: none repeat scroll 0 0 transparent;
+    border: medium none;
 }
