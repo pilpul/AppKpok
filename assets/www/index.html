@@ -35,13 +35,20 @@ var DEBUG_ANDROID_THEME=true
 
 	<div data-role="content">	
 
-	<ul data-role="listview">
-	<li><a href="http://www.annakpok.de">Anna's Homepage</a>
-	<li><a href="http://www.facebook.com/annakpok">Anna's Facebookseite</a></li>
-	<li><a href="http://www.joindiaspora.com/u/annakpok">Anna bei Diaspora*</a></li>
-	<li><a href="#archive"  data-transition="slide">Mailinglistenarchiv</a>
-	</ul>
-	
+		<a href="#archive" class="dashboard_icon" data-transition="slide" class="dashboard_icon_text">
+			<img src="img/faenza_mail.png" /><br /><span class="dashboard_icon_text">Mailingliste</span>
+		</a>
+
+		<a href="#links" class="dashboard_icon" data-transition="slide" class="dashboard_icon_text">
+			<img src="img/faenza_bookmark.png" /><br /><span class="dashboard_icon_text">Links</span>
+		</a>
+		<a href="#call" class="dashboard_icon" data-transition="slide" class="dashboard_icon_text">
+			<img src="img/faenza_call.png" /><br /><span class="dashboard_icon_text">Call Kpok</span>
+		</a>
+		<a href="#energy" class="dashboard_icon" data-transition="slide" class="dashboard_icon_text">
+			<img src="img/faenza_battery_no.png" id="dashboard_icon_energy"/><br />
+			<span class="dashboard_icon_text">Deine Kpok Energy</span>
+		</a>
 	<a href="#" onclick="editPhoto()"><img id="smallImage" src="" style="display:none; width:100%" /></a>
 	</div><!-- /content -->
 
@@ -54,6 +61,69 @@ var DEBUG_ANDROID_THEME=true
 	</div> -->
 	</div><!-- /footer -->
 </div><!-- /page -->
+
+<div data-role="page" id="links">
+
+	<div data-role="header">
+		<a href="#home" data-icon="arrow-l" class="ui-btn-left" data-iconpos="notext" data-direction="reverse" data-transition="slide">zur&uuml;ck</a>
+		<h1>Kpok Links</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">
+		<ul data-role="listview">	
+			<li><a href="http://www.annakpok.de">
+				annakpok.de
+			</a></li>
+			<li><a href="http://www.facebook.com/annakpok">
+				Facebook
+			</a></li>
+			<li><a href="http://www.joindiaspora.com/u/annakpok">
+				Diaspora*
+			</a></li>
+		</ul>
+	</div>
+	<div data-role="footer" data-position="fixed">
+		
+	</div><!-- /footer -->
+</div><!-- /links page -->
+
+<div data-role="page" id="call">
+
+	<div data-role="header">
+		<a href="#home" data-icon="arrow-l" class="ui-btn-left" data-iconpos="notext" data-direction="reverse" data-transition="slide">zur&uuml;ck</a>
+		<h1>Kpok Call</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+		Call KPOK!
+		
+		<label for="textarea-a">Eine Nachricht an alle schicken! (geht noch nicht):</label>
+		<textarea name="textarea" id="textarea-a">Was ist los?</textarea>
+		<a href="#" data-role="button">(abschicken geht noch nicht)</a>
+	</div>
+	<div data-role="footer" data-position="fixed">
+		
+	</div><!-- /footer -->
+</div><!-- /call page -->
+
+<div data-role="page" id="energy">
+
+	<div data-role="header">
+		<a href="#home" data-icon="arrow-l" class="ui-btn-left" data-iconpos="notext" data-direction="reverse" data-transition="slide">zur&uuml;ck</a>
+		<h1>Kpok Energy</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+	
+		<label for="slider-kpok">Bock auf Kpok?</label>
+		<input name="slider-kpok" id="slider-kpok" value="100" min="0" max="100" step="20"/><br />
+		<img src="img/faenza_battery_no.png" id="kpok-energy-slider-img" />
+		<p>Bisher passiert noch nix damit, aber später einmal kommt das alles in die Cloud und wenn alle auf 100 sind wird irgendwas explodieren.
+	</div>
+	<div data-role="footer" data-position="fixed">
+		
+	</div><!-- /footer -->
+</div><!-- /energy page -->
 
 <div data-role="page" id="options">
 
@@ -69,7 +139,8 @@ var DEBUG_ANDROID_THEME=true
 	<a href="http://www.jquerymobile.com">jQuery Mobile</a><br />
 	Ergänzt durch die Plugins <a href="https://github.com/eightmedia/hammer.js">Hammer.js</a>
 	und jjoe64s <a href="https://github.com/jjoe64/jquery-mobile-android-theme">Holo Theme</a>.
-	
+	Im Backend ergänzt durch <a href="http://documentcloud.github.com/backbone/">Backbone.js</a> und
+	den <a href="https://github.com/jeromegn/Backbone.localStorage">localStorage-Adapter</a>
 	<p>Geräteinformationen</p>
 	<p id="text"></p>
 	
@@ -81,10 +152,10 @@ var DEBUG_ANDROID_THEME=true
 </div><!-- /options page -->
 
 <div data-role="page" id="archive">
-
+ <!--  Idea dragging down the page should show "aktualisieren"; dragging up show "older" -->
 	<div data-role="header">
 		<a href="#home" data-icon="arrow-l" class="ui-btn-left"  data-direction="reverse" data-transition="slide">zur&uuml;ck</a>
-		<h1>App Kpok</h1>
+		<h1>Mail-Archiv</h1>
 		<a href="#ConfigDialog" data-icon="gear" class="ui-btn-right" data-iconpos="notext" data-transition="slide">zur&uuml;ck</a>
 	</div><!-- /header -->
 
@@ -96,12 +167,10 @@ var DEBUG_ANDROID_THEME=true
 		
 		</div>
 			
-		<p id="archive_bottommenu">
-			<div data-role="controlgroup" data-type="horizontal">
-				<a href="" data-role="button" data-icon="refresh" onclick="MailDB.update()" data-iconpos="top" >Aktualisieren</a>
-				<a href="" data-role="button" data-icon="arrow-d" onclick="MailDB.getOlder()" data-iconpos="top" >Aktualisieren</a>
-			</div>
-		</p>
+		<div id="archive_bottommenu" data-role="controlgroup" data-type="horizontal">
+			<a href="" data-role="button" data-icon="refresh" onclick="MailDB.update()" data-iconpos="top" >Aktualisieren</a>
+			<a href="" data-role="button" data-icon="arrow-d" onclick="MailDB.getOlder()" data-iconpos="top" >Ältere Laden</a>
+		</div>
 
 			
     </div>
@@ -117,6 +186,7 @@ var DEBUG_ANDROID_THEME=true
 
 	<div data-role="content">
 	<!-- TODO Sort this.. -->
+		<h3>Einstellungen für den Abruf des Mailinglisten Archivs:</h3>
 		<div data-role="fieldcontain">
 		    <label for="baseURL">ServerURL:</label>
 		    <input type="text" name="baseURL" id="baseURL" value=""  />
@@ -125,7 +195,11 @@ var DEBUG_ANDROID_THEME=true
 		    <label for="password">Password:</label>
 		    <input type="password" name="password" id="password" value=""  />
 		    <a href="#" data-role="button" onclick="Config.update()">Speichern</a>
-		    <p><a href="#"  data-role="button"  data-icon="delete" onclick="localStorage.clear();">Lokalen Speicher löschen</a></p>
+		    <h3>Anderen Einstellungen</h3>
+		    <div date-role="controlgroup" data-type="horizontal">
+		    	<a href="#"  data-role="button" id="deleteLocalMails" data-icon="delete" onclick="MailApp.deleteLocalMailStorage()">Lokale Mails löschen</a>
+		    	<a href="#"  data-role="button" id="deleteLocalStorage" data-icon="delete" onclick="MailApp.deleteLocalStorage()">Lokalen Speicher löschen</a>
+		    </div>
 		</div>	
     </div>
 	<div data-role="footer" data-position="fixed">
@@ -145,16 +219,22 @@ var DEBUG_ANDROID_THEME=true
 			message = body.replace(/\n/gi,"<br />"); 
 		}
 	%>
-	<div data-role="collapsible" data-iconpos="right"><h3><%= subject %><p class="ui-li-aside ui-li-desc">Von <%= from %> um <%= date %></h3>
-	<p id="<%= id %>"><%= message %></p>
+	<div data-role="collapsible" data-iconpos="right">
+    	<h3><%= subject %><br />
+			<span class="mailfrom">Von <%= from %>
+			<br />Am <%= date %> um <%= time %> Uhr</span>
+		</h3>
+	<div class="mailcontent">
+		<p id="<%= id %>"><%= message %></p>
+	</div>
 	</div>
 	
 </script>
 <script id="tpl_archiveDividers" type="text/template">
-			<div class="archivedivider ui-li-heading" id="archive_today">Heute</div>
-			<div class="archivedivider ui-li-heading" id="archive_yesterday">Gestern</div>
-			<div class="archivedivider ui-li-heading" id="archive_lastweek">Letzte Woche</div>
-			<div class="archivedivider ui-li-heading"  id="archive_old">Fr&uuml;her</div>
+			<div class="archivedivider ui-li-heading" id="archive_today"><h3>Heute</3></div>
+			<div class="archivedivider ui-li-heading" id="archive_yesterday"><h3>Gestern</3></div>
+			<div class="archivedivider ui-li-heading" id="archive_lastweek"><h3>Letzte Woche</3></div>
+			<div class="archivedivider ui-li-heading"  id="archive_old"><h3>Fr&uuml;her</3></div>
 </script>
 <script src="js/appkpok.js"></script>
 </body>

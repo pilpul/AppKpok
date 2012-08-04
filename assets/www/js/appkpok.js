@@ -17,6 +17,7 @@ var ConfigSetting = Backbone.Model.extend({
 		baseURL: "http://URL-SLEEPY.MONGOOSE:27080/DATABASE/",
 		username: "USERNAME_WITH_READ_ACCESS",
 		password: "USERS_PASSWORD"
+		energy: "no"
 	},
 	update :function(){
 		this.set({baseURL: $('#baseURL').val(), username: $('#username').val(), password: $('#password').val() });
@@ -33,7 +34,6 @@ $( '#ConfigDialog' ).live( 'pageinit',function(event){
   $('#username').val(Config.get("username"))
   $('#password').val(Config.get("password"))
 });
-
 
 	
 /**
@@ -72,7 +72,10 @@ var Mail = Backbone.Model.extend({
     	}else{
     		return "archive_old"
     	}
-    }
+    },
+    clear: function() {
+        this.destroy();
+      }
 })   
 
 /**
@@ -94,7 +97,7 @@ var MailDBStore = Backbone.Collection.extend({
 		//"Cross Domain" Post messages only works in PhoneGap not in native browsers..
 		$.post(Config.get('baseURL')+'_authenticate', {"username":Config.get('username'), "password":Config.get('password')},function(data){
 			console.log("authenticating")
-		}, 'jsonp')
+		}, 'json')
 		.success(function(data){
 			console.log(data.ok)
 		})
@@ -107,29 +110,11 @@ var MailDBStore = Backbone.Collection.extend({
 		$.mobile.showPageLoadingMsg('b','Loading',false)
 	    $.post(Config.get('baseURL')+'mails/_find?sort={"_id"%3A-1}', {'limit': 10}, function(data){}, 'jsonp')
 	    	.success(function(data){
-	    		//TODO make this work in something like this.bulkAdd() to be reusable
-		    	if(data.ok != 1){
-		    		console.error(data.errmsg);
-		    	}else{
-		    		console.log('processing answer..')
-			    	newmails = 0;
-			    	$.each(data.results, function(i, mail){
-			    		if(MailDB.where({date: mail.date}).length<1){
-			    			newmails++;
-			        			newmail = new Mail(mail);
-			    				MailDB.add(newmail)
-			    				newmail.save();	
-			    		}
-			    	})
-			    	console.log(newmails + ' new Items')
-			    	App.render(); //re-render the app after updates from Database
-		    	}
-		    	$.mobile.hidePageLoadingMsg()	
+		    	MailDB.bulkAddToLocalDB(data);	
 	    	})
 		    .error( function(){
 		    	console.error('Error connecting to database. See answer to request for details')
-		    	console.log('Trying (re-)authentication')
-		    	this.authenticate();
+		    	$.mobile.hidePageLoadingMsg()
 		    }
 	    )	
 	},
@@ -137,31 +122,39 @@ var MailDBStore = Backbone.Collection.extend({
 		lastEntryNr = MailDB.length/10;
 	    $.post(Config.get('baseURL')+'mails/_find?sort={"_id"%3A-1}', {'limit': 10, 'skip':MailDB.length}, function(data){}, 'jsonp')
 	    .success(function(data){
-	    	if(data.ok != 1){
-	    		console.error(data.errmsg);
-	    	}else{
-	    		console.log('processing answer..')
-		    	newmails = 0;
-		    	$.each(data.results, function(i, mail){
-		    		if(MailDB.where({date: mail.date}).length<1){
-		    			newmails++;
-		        			newmail = new Mail(mail);
-		    				MailDB.add(newmail)
-		    				newmail.save();	
-		    		}
-		    	})
-		    	console.log(newmails + ' new Items')
-		    	App.render(); //re-render the app after updates from Database
-	    	}
-	    	$.mobile.hidePageLoadingMsg()	
+	    	MailDB.bulkAddToLocalDB(data);
 	    })
     	.error( function(){
 	    	console.error('Error connecting to database. See answer to request for details')
-	    	//this.authenticate();
+	    	MailDB.authenticate();
+	    	$.mobile.hidePageLoadingMsg()	
 	    })
 	},
-	bulkAdd: function(data){
-		//This is somehow not referenceable from within the post.success' above
+	bulkAddToLocalDB: function(data){
+		console.log('processing answer..')
+    	if(data.ok != 1){
+    		console.error(data.errmsg);
+	    	console.log('Trying (re-)authentication')
+	    	this.authenticate();
+    	}else{
+	    	newmails = 0;
+	    	$.each(data.results, function(i, mail){
+	    		if(MailDB.where({date: mail.date}).length<1){
+	    			newmails++;
+	        			newmail = new Mail(mail);
+	    				MailDB.add(newmail)
+	    				newmail.save();	
+	    		}
+	    	})
+	    	console.info('Added '+ newmails + ' new Items')
+	    	MailApp.render(); //re-render the app after updates from Database
+    	}
+    	$.mobile.hidePageLoadingMsg()
+	},
+	getTopics: function(){
+		/*
+		 * Idea: compute something like a tag list or hot topics
+		 */
 	}
 });
 var MailDB = new MailDBStore;
@@ -174,18 +167,29 @@ var MailDB = new MailDBStore;
 var MailView = Backbone.View.extend({
 	template: _.template($('#tplMailListEntry').html()),
 
-    render: function() {
-        this.$el.html(this.template(this.model.toJSON()));
+    render: function() { 
+    	date = new Date(this.model.get('date'));
+        this.$el.html(this.template({
+        	'id': this.model.get('id'),
+        	'message': this.model.get('message'),
+        	'body': this.model.get('body'),
+        	'html': this.model.get('html'),
+        	'from': this.model.get('from'),
+        	'subject': this.model.get('subject'),
+        	'date':date.toLocaleDateString(),
+        	'day': date.getDate()+'.'+(date.getMonth()+1)+'.'+date.getFullYear(),
+        	'time': date.getHours()+':'+date.getMinutes()
+        }));
         return this;
     }
 })
 
 /**
- * Backbone-View: AppView
+ * Backbone-View: MailAppView
  * Description: Renders the application simply by calling all Views 
  * 
  */
-var AppView = Backbone.View.extend({
+var MailAppView = Backbone.View.extend({
 	tplArchiveDivider: _.template($('#tpl_archiveDividers').html()),
 	
 	el: $("#MailList"),
@@ -196,10 +200,10 @@ var AppView = Backbone.View.extend({
 		console.log('Creating view');
 		this.addAll()
 	},
+	// Adds one MailDB element as an element to the list sorted  by dateCategory (today, yesterday, last week, older)
 	addOne: function(mail) {
 	      var view = new MailView({model: mail});
-	      $("#"+mail.dateCategory()).after(view.render().el);
-	      //TODO when updating without reload the "after" pastes older mails BEFORE the newer ones..
+	      $("#"+mail.dateCategory()).append(view.render().el);
 	      $("#"+mail.dateCategory()).css('display','block')
 	    },
 	addAll: function() {
@@ -207,15 +211,58 @@ var AppView = Backbone.View.extend({
 	      MailDB.each( this.addOne )
 	    },
 	render: function(){
-		console.log("Re-rendering AppView")
+		console.log("Re-rendering MailAppView")
 		$('#archive_content').empty();
 		$('#archive_content').html(this.tplArchiveDivider());
 		this.addAll();
 		//re-rendering the collapsibles with jQM
 		//TODO the height of dividers is wrong after first refreshe
 		$('div[data-role=collapsible]').collapsible({refresh:true});
+	},
+	deleteLocalMailStorage: function(){
+		//TODO Only delete mail DB not Settings
+		console.info('Delete all Mails localStorage')
+		while(MailDB.length>0){ //this has to be done several times since on "each" round does not clear fully
+			MailDB.each( this.deleteOne )
+		}
+		$('#deleteLocalMails').children().children().addClass('ui-icon-check');
+		$('#deleteLocalMails').children().children().eq(0).html('Lokaler Mail Speicher gelöscht');
+		this.render();
+	},
+	deleteLocalStorage: function(){
+		console.info('Delete all data from localStorage')
+		localStorage.clear();
+		$('#deleteLocalStorage').children().children().addClass('ui-icon-check');
+		$('#deleteLocalStorage').children().children().eq(0).html('Lokaler Speicher gelöscht');
+		window.location.reload();
+	},
+	deleteOne: function(mail){
+		mail.clear()
+	}
+})
+var MailApp = new MailAppView;
+
+var AppView = Backbone.View.extend({
+	initialize: function(){
+		//Initialize the energy-level part of the app
+		$('#dashboard_icon_energy').attr('src','img/faenza_battery_'+Config.get('energy')+'.png' );
+		$('#kpok-energy-slider-img').attr('src','img/faenza_battery_'+Config.get('energy')+'.png' );
+		$('#slider-kpok').slider()
+		$('#slider-kpok').val(Config.get('energy'))
+		$('#slider-kpok').slider('refresh')
+
+		$('#slider-kpok').bind( "change", function(){
+			val = $('#slider-kpok').val();
+			Config.set('energy',val);
+			Config.save();
+			$('#dashboard_icon_energy').attr('src','img/faenza_battery_'+val+'.png' );
+			$('#kpok-energy-slider-img').attr('src','img/faenza_battery_'+val+'.png' );
+		})
 	}
 })
 
+//This is the jQM Version of $(function(){})
+$(document).bind('pageinit', function(){
+	var App = new AppView;
+})
 
-var App = new AppView;

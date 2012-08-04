@@ -1,3 +1,25 @@
+/******************************/
+/*     Dashboard Styles      */
+/******************************/
+.dashboard_icon{
+	width: 10em;
+	float:left;
+	text-align: center;
+    text-decoration: none;
+}
+.dashboard_icon_text{
+    color: #333333;
+    font-weight: bold;
+    text-shadow: 0 1px 1px #F6F6F6;
+}
+/******************************/
+/*     Energy Styles     */
+/******************************/
+
+#kpok-energy-slider-img{
+	widht: 96px;
+	height: 96px;
+}
 
 /******************************/
 /*     Mailarchive Styles     */
@@ -8,11 +30,23 @@
 }
 .archivedivider{
 	display: none;
+}
+.archivedivider > h3{
 	padding: 0.6em;
 }
-
 #archive_bottommenu{
 	margin-top:2em;
+	width: 100%;
+}
+#archive_bottommenu > a{
+	width: 49%;
+}
+.mailfrom{
+	font-weight: normal;
+	font-size: 0.8em;
+}
+.mailcontent{
+	    white-space: normal;
 }
 
 /******************************/
@@ -35,4 +69,7 @@ body.android .ui-icon-loading {
 body.android .ui-body-b {
     background: none repeat scroll 0 0 transparent;
     border: medium none;
+}
+body.android .ui-page {
+    background:  url("../img/schrift.png") no-repeat scroll center bottom transparent;
 }
