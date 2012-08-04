@@ -22,10 +22,11 @@ Those that are part of Anna Kpok can request user name and passwords to retreive
 
 ##Changelog
 20120804: Finished work on Mail Archive. Improved UI. Added first drafts of further functionality
+
 20120803: Had to work out how requests to sleepy.mongoose are translated to mongoDB. Now requesting 10 items at a time (and older ones);
 Added sorting by date in AppView, fixed UI, fixed authentication
 
 20120801: Changed to mongoDB Backend.
 
-##TODO
-Write backend howto
+##Backend
+Initial release and description [here](https://github.com/pilpul/SrvKpok)
