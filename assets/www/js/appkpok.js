@@ -14,9 +14,9 @@
 var ConfigSetting = Backbone.Model.extend({
 	localStorage: new Backbone.LocalStorage("settings"),
 	defaults: {
-		baseURL: "http://URL-SLEEPY.MONGOOSE:27080/DATABASE/",
-		username: "USERNAME_WITH_READ_ACCESS",
-		password: "USERS_PASSWORD"
+		baseURL: "http://URL/DATABASE/",
+		username: "USER",
+		password: "PASSWORD",
 		energy: "no"
 	},
 	update :function(){
@@ -147,6 +147,8 @@ var MailDBStore = Backbone.Collection.extend({
 	    		}
 	    	})
 	    	console.info('Added '+ newmails + ' new Items')
+	    	//Android Alert
+	    	//navigator.notification.alert('Added '+ newmails + ' new Items', console.log('alert dismissed'), 'Aktualsiert')
 	    	MailApp.render(); //re-render the app after updates from Database
     	}
     	$.mobile.hidePageLoadingMsg()
@@ -245,8 +247,9 @@ var MailApp = new MailAppView;
 var AppView = Backbone.View.extend({
 	initialize: function(){
 		//Initialize the energy-level part of the app
-		$('#dashboard_icon_energy').attr('src','img/faenza_battery_'+Config.get('energy')+'.png' );
-		$('#kpok-energy-slider-img').attr('src','img/faenza_battery_'+Config.get('energy')+'.png' );
+		var backgroundposition = {'no':-96, '0':0, '20':-192, '40':-288, '60':-384,'80':-480,'100':-576}
+		$('.kpok-energy-slider-img').css('background-position', backgroundposition[Config.get('energy')] );
+		//this is a workaroud because jQM got confused when initializing with the energy value from localstorage
 		$('#slider-kpok').slider()
 		$('#slider-kpok').val(Config.get('energy'))
 		$('#slider-kpok').slider('refresh')
@@ -254,15 +257,24 @@ var AppView = Backbone.View.extend({
 		$('#slider-kpok').bind( "change", function(){
 			val = $('#slider-kpok').val();
 			Config.set('energy',val);
-			Config.save();
-			$('#dashboard_icon_energy').attr('src','img/faenza_battery_'+val+'.png' );
-			$('#kpok-energy-slider-img').attr('src','img/faenza_battery_'+val+'.png' );
+			Config.save();			
+			$('.kpok-energy-slider-img').css('background-position', backgroundposition[Config.get('energy')] )
 		})
+		
 	}
 })
 
 //This is the jQM Version of $(function(){})
 $(document).bind('pageinit', function(){
 	var App = new AppView;
+	document.addEventListener("deviceready", onDeviceReady, false);
 })
 
+function onDeviceReady() {
+    string = 'Device Name: '     + device.name     + '<br />' + 
+                        'Device Cordova: '  + device.cordova + '<br />' + 
+                        'Device Platform: ' + device.platform + '<br />' + 
+                        'Device UUID: '     + device.uuid     + '<br />' + 
+                        'Device Version: '  + device.version  + '<br />';
+    $('#text').html(string)
+}

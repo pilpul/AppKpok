@@ -5,7 +5,7 @@
 
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
 		
-<script type="text/javascript" charset="utf-8" src="cordova-1.7.0.js"></script>
+<script type="text/javascript" charset="utf-8" src="cordova-2.0.0.js"></script>
 <script src="js/jquery-1.7.2.min.js"></script>
 <script src="js/jquery.mobile-1.1.0/jquery.mobile-1.1.0.min.js"></script>
 <script src="js/underscore.min.js"></script>
@@ -30,7 +30,7 @@ var DEBUG_ANDROID_THEME=true
 
 	<div data-role="header">
 		<h1>App Kpok</h1>
-		<a href="#options" data-icon="gear" class="ui-btn-right" data-iconpos="notext" data-transition="slide">Options</a>
+		<a href="#options" class="ui-btn-right native-icon-lookalike" data-iconpos="notext" data-transition="slide" data-icon="menu-droid" >Options</a>
 	</div><!-- /header -->
 
 	<div data-role="content">	
@@ -46,7 +46,7 @@ var DEBUG_ANDROID_THEME=true
 			<img src="img/faenza_call.png" /><br /><span class="dashboard_icon_text">Call Kpok</span>
 		</a>
 		<a href="#energy" class="dashboard_icon" data-transition="slide" class="dashboard_icon_text">
-			<img src="img/faenza_battery_no.png" id="dashboard_icon_energy"/><br />
+			<div class="kpok-energy-slider-img" /></div>
 			<span class="dashboard_icon_text">Deine Kpok Energy</span>
 		</a>
 	<a href="#" onclick="editPhoto()"><img id="smallImage" src="" style="display:none; width:100%" /></a>
@@ -117,7 +117,7 @@ var DEBUG_ANDROID_THEME=true
 	
 		<label for="slider-kpok">Bock auf Kpok?</label>
 		<input name="slider-kpok" id="slider-kpok" value="100" min="0" max="100" step="20"/><br />
-		<img src="img/faenza_battery_no.png" id="kpok-energy-slider-img" />
+		<div class="kpok-energy-slider-img" /></div>
 		<p>Bisher passiert noch nix damit, aber später einmal kommt das alles in die Cloud und wenn alle auf 100 sind wird irgendwas explodieren.
 	</div>
 	<div data-role="footer" data-position="fixed">
@@ -140,7 +140,10 @@ var DEBUG_ANDROID_THEME=true
 	Ergänzt durch die Plugins <a href="https://github.com/eightmedia/hammer.js">Hammer.js</a>
 	und jjoe64s <a href="https://github.com/jjoe64/jquery-mobile-android-theme">Holo Theme</a>.
 	Im Backend ergänzt durch <a href="http://documentcloud.github.com/backbone/">Backbone.js</a> und
-	den <a href="https://github.com/jeromegn/Backbone.localStorage">localStorage-Adapter</a>
+	den <a href="https://github.com/jeromegn/Backbone.localStorage">localStorage-Adapter</a><br />
+	Lizenz: <a href="https://www.gnu.org/licenses/gpl.html">GPL v3</a><br />
+	Code: <a href="https://github.com/pilpul/AppKpok">github</a><br />
+	Author: <a href="https://github.com/pilpul/AppKpok">Martin Pilpul Kpok</a>
 	<p>Geräteinformationen</p>
 	<p id="text"></p>
 	
@@ -154,9 +157,9 @@ var DEBUG_ANDROID_THEME=true
 <div data-role="page" id="archive">
  <!--  Idea dragging down the page should show "aktualisieren"; dragging up show "older" -->
 	<div data-role="header">
-		<a href="#home" data-icon="arrow-l" class="ui-btn-left"  data-direction="reverse" data-transition="slide">zur&uuml;ck</a>
+		<a href="#home" data-icon="arrow-l" class="ui-btn-left"  data-direction="reverse" data-transition="slide" data-iconpos="notext">zur&uuml;ck</a>
 		<h1>Mail-Archiv</h1>
-		<a href="#ConfigDialog" data-icon="gear" class="ui-btn-right" data-iconpos="notext" data-transition="slide">zur&uuml;ck</a>
+		<a href="#ConfigDialog" data-icon="menu-droid" class="ui-btn-right" data-iconpos="notext" data-transition="slide" class="native-icon-lookalike">zur&uuml;ck</a>
 	</div><!-- /header -->
 
 	<div data-role="content">

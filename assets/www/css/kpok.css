@@ -7,6 +7,9 @@
 	text-align: center;
     text-decoration: none;
 }
+.dashboard_icon img{
+	width: 96px;
+}
 .dashboard_icon_text{
     color: #333333;
     font-weight: bold;
@@ -16,9 +19,13 @@
 /*     Energy Styles     */
 /******************************/
 
-#kpok-energy-slider-img{
-	widht: 96px;
-	height: 96px;
+.kpok-energy-slider-img{
+    background-image: url("../img/faenza_battery.png");
+    background-position:  center;
+    background-size: cover;
+    height: 96px;
+    margin: auto;
+    width: 96px;
 }
 
 /******************************/
@@ -72,4 +79,24 @@ body.android .ui-body-b {
 }
 body.android .ui-page {
     background:  url("../img/schrift.png") no-repeat scroll center bottom transparent;
+}
+
+.ui-icon-menu-droid {
+	background-image: url("../img/ui-icon-menu-dots-18.png") !important;
+	box-shadow: none !important;
+
+}
+.ui-btn-icon-notext{
+	box-shadow: none !important;
+	border: none !important;
+	background: none !important;
+}
+.ui-btn-icon-notext > .ui-btn-inner{
+	border: 0 !important;
+}
+.ui-btn-icon-notext > .ui-btn-inner > .ui-icon{
+	background-color: #222222;
+}
+.ui-btn-icon-notext > .ui-btn-inner > .ui-icon-shadow{
+   box-shadow: 0 0 0 rgba(255, 255, 255, 0.4);
 }
