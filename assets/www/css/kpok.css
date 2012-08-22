@@ -14,6 +14,31 @@
     color: #333333;
     font-weight: bold;
     text-shadow: 0 1px 1px #F6F6F6;
+
+}
+#MeetNotify{
+	opacity: 0.9;
+	clear: both;
+	padding: 1em;
+}
+.meetTitle{
+	margin-top: 1em;
+	text-align: right;
+	font-size: 0.8em;
+    background-color: #333;
+    padding: 0.8em;
+    color: #F5F5F5;
+    text-shadow: none;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+#meetText{
+	background-color: #e4e4e4;
+	padding: 1em;
+}
+#meetText{
+	list-style: none;
+	margin: 0;
 }
 /******************************/
 /*     Energy Styles     */
@@ -55,6 +80,7 @@
 .mailcontent{
 	    white-space: normal;
 }
+
 
 /******************************/
 /* Overrides for theme styles */

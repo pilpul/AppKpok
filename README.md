@@ -21,6 +21,8 @@ Those that are part of Anna Kpok can request user name and passwords to retreive
 * The database on the backend is a [mongoDB](https://mongodb.org/) instance with [sleepy.mongoose](https://github.com/kchodorow/sleepy.mongoose) as REST-Interface
 
 ##Changelog
+20120822: Added simple feature to display important dates on the dashboard; Settings dialog for db access is now a page;
+
 20120804: Finished work on Mail Archive. Improved UI. Added first drafts of further functionality
 
 20120803: Had to work out how requests to sleepy.mongoose are translated to mongoDB. Now requesting 10 items at a time (and older ones);

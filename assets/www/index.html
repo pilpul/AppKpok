@@ -3,8 +3,8 @@
 <head>
 <title>App Kpok</title>
 
-<meta http-equiv="content-type" content="text/html;charset=utf-8" />
-		
+<meta http-equiv="content-type" content="text/html;charset=utf-8" /><base>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <script type="text/javascript" charset="utf-8" src="cordova-2.0.0.js"></script>
 <script src="js/jquery-1.7.2.min.js"></script>
 <script src="js/jquery.mobile-1.1.0/jquery.mobile-1.1.0.min.js"></script>
@@ -34,22 +34,27 @@ var DEBUG_ANDROID_THEME=true
 	</div><!-- /header -->
 
 	<div data-role="content">	
-
-		<a href="#archive" class="dashboard_icon" data-transition="slide" class="dashboard_icon_text">
-			<img src="img/faenza_mail.png" /><br /><span class="dashboard_icon_text">Mailingliste</span>
-		</a>
-
-		<a href="#links" class="dashboard_icon" data-transition="slide" class="dashboard_icon_text">
-			<img src="img/faenza_bookmark.png" /><br /><span class="dashboard_icon_text">Links</span>
-		</a>
-		<a href="#call" class="dashboard_icon" data-transition="slide" class="dashboard_icon_text">
-			<img src="img/faenza_call.png" /><br /><span class="dashboard_icon_text">Call Kpok</span>
-		</a>
-		<a href="#energy" class="dashboard_icon" data-transition="slide" class="dashboard_icon_text">
-			<div class="kpok-energy-slider-img" /></div>
-			<span class="dashboard_icon_text">Deine Kpok Energy</span>
-		</a>
-	<a href="#" onclick="editPhoto()"><img id="smallImage" src="" style="display:none; width:100%" /></a>
+		<div id="dashboard">
+			<a href="#archive" class="dashboard_icon" data-transition="slide" class="dashboard_icon_text">
+				<img src="img/faenza_mail.png" /><br /><span class="dashboard_icon_text">Mailingliste</span>
+			</a>
+	
+			<a href="#links" class="dashboard_icon" data-transition="slide" class="dashboard_icon_text">
+				<img src="img/faenza_bookmark.png" /><br /><span class="dashboard_icon_text">Links</span>
+			</a>
+			<a href="#call" class="dashboard_icon" data-transition="slide" class="dashboard_icon_text">
+				<img src="img/faenza_call.png" /><br /><span class="dashboard_icon_text">Call Kpok</span>
+			</a>
+			<a href="#energy" class="dashboard_icon" data-transition="slide" class="dashboard_icon_text">
+				<div class="kpok-energy-slider-img" /></div>
+				<span class="dashboard_icon_text">Deine Kpok Energy</span>
+			</a>
+		</div>
+	<div id="MeetNotify">
+		<div class="meetTitle">Was steht an?</div>
+	    <ul id="meetText" ></ul>
+	</div>
+	
 	</div><!-- /content -->
 
 	<div data-role="footer" data-position="fixed">
@@ -238,6 +243,15 @@ var DEBUG_ANDROID_THEME=true
 			<div class="archivedivider ui-li-heading" id="archive_yesterday"><h3>Gestern</3></div>
 			<div class="archivedivider ui-li-heading" id="archive_lastweek"><h3>Letzte Woche</3></div>
 			<div class="archivedivider ui-li-heading"  id="archive_old"><h3>Fr&uuml;her</3></div>
+</script>
+<script id="tpl_nextMeet" type="text/template">
+			<% 
+				d = new Date(date);
+				d = d.toLocaleDateString(); 
+			    t;
+				(dif==1) ? t = "Tag" : t = "Tagen"; 
+			%>
+			<li><%= d %>: <%= title %>; das ist in <%= dif %> <%= t %></li>
 </script>
 <script src="js/appkpok.js"></script>
 </body>

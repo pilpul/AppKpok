@@ -14,8 +14,8 @@
 var ConfigSetting = Backbone.Model.extend({
 	localStorage: new Backbone.LocalStorage("settings"),
 	defaults: {
-		baseURL: "http://URL/DATABASE/",
-		username: "USER",
+		baseURL: "http://YOURSERVER:27080/DATEBASE/",
+		username: "USERNAME WITH READ ACCESS",
 		password: "PASSWORD",
 		energy: "no"
 	},
@@ -86,7 +86,9 @@ var Mail = Backbone.Model.extend({
 var MailDBStore = Backbone.Collection.extend({
 	model: Mail,
 	localStorage: new Backbone.LocalStorage("kpokmailarchive"),
-
+	initialize: function(){
+		this.authenticate();
+	},
 	//Sorts the collection automatically by date
 	comparator : function(mail) {
 	  milli = new Date(mail.get("date"));
@@ -96,13 +98,13 @@ var MailDBStore = Backbone.Collection.extend({
     	//Authentication TODO
 		//"Cross Domain" Post messages only works in PhoneGap not in native browsers..
 		$.post(Config.get('baseURL')+'_authenticate', {"username":Config.get('username'), "password":Config.get('password')},function(data){
-			console.log("authenticating")
+			console.log("Authenticating")
 		}, 'json')
 		.success(function(data){
-			console.log(data.ok)
+			console.info(data.ok)
 		})
 		.error(function(){
-			console.error('Error Authenticating')
+			App.alert('Probleme mit der Verbindung zur Cloud.. probier es später nochmal', 'Sorry, Fehler!', console.error('Error Authenticating'))
 		})
 	},
 	update: function(){
@@ -110,7 +112,14 @@ var MailDBStore = Backbone.Collection.extend({
 		$.mobile.showPageLoadingMsg('b','Loading',false)
 	    $.post(Config.get('baseURL')+'mails/_find?sort={"_id"%3A-1}', {'limit': 10}, function(data){}, 'jsonp')
 	    	.success(function(data){
-		    	MailDB.bulkAddToLocalDB(data);	
+		    	newitems = MailDB.bulkAddToLocalDB(data);
+		    	msg = "";
+		    	if(newitems == 1){
+		    		msg = newitems + " neue Mail";
+		    	}else{
+		    		msg = newitems + " neue Mails";
+		    	}
+		    	App.alert(msg, 'Update abgeschlossen', console.log('alert dismissed'))
 	    	})
 		    .error( function(){
 		    	console.error('Error connecting to database. See answer to request for details')
@@ -122,7 +131,9 @@ var MailDBStore = Backbone.Collection.extend({
 		lastEntryNr = MailDB.length/10;
 	    $.post(Config.get('baseURL')+'mails/_find?sort={"_id"%3A-1}', {'limit': 10, 'skip':MailDB.length}, function(data){}, 'jsonp')
 	    .success(function(data){
-	    	MailDB.bulkAddToLocalDB(data);
+	    	newitems = MailDB.bulkAddToLocalDB(data);
+	    	msg =  newitems + " alte Mails am Ende der Liste hinzugefügt";
+	    	App.alert(msg, 'Update abgeschlossen', console.log('alert dismissed'))
 	    })
     	.error( function(){
 	    	console.error('Error connecting to database. See answer to request for details')
@@ -131,13 +142,13 @@ var MailDBStore = Backbone.Collection.extend({
 	    })
 	},
 	bulkAddToLocalDB: function(data){
+		newmails = 0;
 		console.log('processing answer..')
     	if(data.ok != 1){
     		console.error(data.errmsg);
 	    	console.log('Trying (re-)authentication')
 	    	this.authenticate();
     	}else{
-	    	newmails = 0;
 	    	$.each(data.results, function(i, mail){
 	    		if(MailDB.where({date: mail.date}).length<1){
 	    			newmails++;
@@ -146,12 +157,11 @@ var MailDBStore = Backbone.Collection.extend({
 	    				newmail.save();	
 	    		}
 	    	})
-	    	console.info('Added '+ newmails + ' new Items')
-	    	//Android Alert
-	    	//navigator.notification.alert('Added '+ newmails + ' new Items', console.log('alert dismissed'), 'Aktualsiert')
+	    	console.info('Added '+ newmails + ' new items')
 	    	MailApp.render(); //re-render the app after updates from Database
     	}
     	$.mobile.hidePageLoadingMsg()
+    	return newmails;
 	},
 	getTopics: function(){
 		/*
@@ -159,7 +169,7 @@ var MailDBStore = Backbone.Collection.extend({
 		 */
 	}
 });
-var MailDB = new MailDBStore;
+
 
 /**
  * Backbone-View: MailView
@@ -242,9 +252,41 @@ var MailAppView = Backbone.View.extend({
 		mail.clear()
 	}
 })
-var MailApp = new MailAppView;
+
+
+/**
+ * Termine
+ */
+
+
+var DateView = Backbone.View.extend({
+	tplMeetNote: _.template($('#tpl_nextMeet').html()),
+	parent: $('#meetText'),
+	initialize: function(){
+		console.log('init Dateview')
+		this.parent.empty();
+		$.get(Config.get('baseURL')+'dates/_find?sort={"_date"%3A1}', _.bind(function(data){
+			_.each(data.results, _.bind(function(meet){
+				d = new Date(meet.date);
+				t = new Date();
+				dif = d.getTime()-t.getTime();
+				dif = Math.ceil(dif/1000/60/60/24);
+				if(dif>0){
+					this.parent.append(this.tplMeetNote({'title': meet.title, 'date':meet.date, 'dif': dif}))
+				}
+			}, this))
+		}, this), 'jsonp')
+		.error(function(){
+			App.alert('Kann die Termine nicht laden!')
+		})
+
+	}
+})
+
+
 
 var AppView = Backbone.View.extend({
+	isMobileDevice : false,
 	initialize: function(){
 		//Initialize the energy-level part of the app
 		var backgroundposition = {'no':-96, '0':0, '20':-192, '40':-288, '60':-384,'80':-480,'100':-576}
@@ -260,17 +302,30 @@ var AppView = Backbone.View.extend({
 			Config.save();			
 			$('.kpok-energy-slider-img').css('background-position', backgroundposition[Config.get('energy')] )
 		})
-		
+
+
+	},
+	alert: function(message, title, callback){
+		if(this.isMobileDevice){
+			navigator.notification.alert(message, callback, title);
+		}else{
+			alert(message);
+		}
 	}
 })
+var App, MailDB, MailApp, DateApp
+App = new AppView;
+MailDB = new MailDBStore;
+MailApp = new MailAppView;
+DateApp = new DateView;
 
 //This is the jQM Version of $(function(){})
 $(document).bind('pageinit', function(){
-	var App = new AppView;
 	document.addEventListener("deviceready", onDeviceReady, false);
 })
 
 function onDeviceReady() {
+	App.isMobileDevice = true;
     string = 'Device Name: '     + device.name     + '<br />' + 
                         'Device Cordova: '  + device.cordova + '<br />' + 
                         'Device Platform: ' + device.platform + '<br />' + 
